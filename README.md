@@ -6,6 +6,8 @@ A browser-based version of [Jotto](https://en.wikipedia.org/wiki/Jotto) that sup
 
 This project is intended as a playground for an ASP.NET- and SignalR-based version of the game.  The UI is intentionally quick-n-dirty, with emphasis only on functionality and none on aesthetics.
 
+I used this project as a way to gain some familiarity with [Nancy](http://nancyfx.org/), [OWIN](http://owin.org/), [SignalR](http://signalr.net/), [TypeScript](https://www.typescriptlang.org/), and [Knockout](http://knockoutjs.com/).
+
 ## Play the Game
 
 A running instance of this game can be found [here](http://jotto.seanhokanson.org/), hosted on Azure.
