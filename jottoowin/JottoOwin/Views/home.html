@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.title</title>
+    <script src="Scripts/jquery-3.1.0.min.js"></script>
+    <script src="Scripts/knockout-3.4.0.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.1.min.js"></script>
+    <script src="signalr/hubs" type="text/javascript"></script>
+    <script src="Scripts/jotto.js"></script>
+</head>
+<body>
+    <header>
+        <h1>@Model.title</h1>
+        <h2 data-bind="visible: myName().length > 0, text: 'Welcome, ' + myName()"></h2>
+    </header>
+
+    <section>
+        <div style="color:red" data-bind="visible: errorMessage() != '', text: errorMessage()"></div>
+        <div data-bind="visible: gameState() == 'begin'">
+            <form data-bind="submit: currentGameState().registerPlayer">
+                <label>Player:  </label>
+                <input id="registerTxt" type="text" data-bind="value: playerToRegister" />
+                <button type="submit" data-bind="enable: playerToRegister().length > 0">Register</button>
+            </form>
+        </div>
+        <div data-bind="visible: gameState() == 'chooseOpponent' || gameState() == 'invitationPending'">
+            <span>Choose an opponent:</span>
+            <span data-bind="visible: inviterPlayer().name != '', text: '(Invitation pending from ' + inviterPlayer().name + ')'"></span>
+            <ul data-bind="foreach: opponents">
+                <li><a href="#" data-bind="text: name, click: $root.currentGameState().chooseOpponent.bind($root, $data)"></a></li>
+            </ul>
+        </div>
+        <div data-bind="visible: gameState() == 'chooseWord' || gameState() == 'waitingForMyWord'">
+            <label>My Word:  </label>
+            <input id="wordTxt" type="text" data-bind="value: myWord" />
+            <a href="#" data-bind="visible: gameId() == '', enable: myWord().length == 5, click: $root.currentGameState().startGameAndWaitForOpponentWord.bind($root)">Start the game and wait for your opponent to join...</a>
+            <a href="#" data-bind="visible: gameId() == '', enable: myWord().length == 5, click: $root.currentGameState().waitForOpponentToStart.bind($root)">Wait for your opponent to start the game...</a>
+            <a href="#" data-bind="visible: gameId() != '', enable: myWord().length == 5, click: $root.currentGameState().joinGame.bind($root)">Join game...</a>
+        </div>
+        <div data-bind="visible: gameState() == 'waitingForOpponentWord'">
+            <span>Waiting for your opponent to provide their word...</span>
+        </div>
+        <div data-bind="visible: gameState() == 'waitingForOpponentToStart'">
+            <span>Waiting for your opponent to start the game...</span>
+        </div>
+        <div data-bind="visible: gameState() == 'myTurn' || gameState() == 'opponentTurn' || gameState() == 'done'">
+            <span data-bind="visible: gameState() != 'done'">It's your <span data-bind="visible: gameState() == 'opponentTurn'">opponent's </span>turn</span>
+            <div data-bind="visible: !opponentIsComputer() && gameState() == 'done'">
+                <span data-bind="visible: myGuesses().length == opponentGuesses().length">It's a tie.</span>
+                <span data-bind="visible: myGuesses().length > opponentGuesses().length">Your opponent won.</span>
+                <span data-bind="visible: myGuesses().length < opponentGuesses().length">You won!</span>
+            </div>
+            <div data-bind="visible: gameState() == 'myTurn'">
+                <form data-bind="submit: currentGameState().takeTurn">
+                    <label>Guess:  </label>
+                    <input id="guessTxt" type="text" data-bind="value: guessToAdd" />
+                    <button type="submit" data-bind="enable: gameState() == 'myTurn' && guessToAdd().length == 5">Guess</button>
+                </form>
+            </div>
+            <p></p>
+            <table style="font-family:'Courier New', Courier, 'Nimbus Mono L', monospace">
+                <thead>
+                    <tr>
+                        <td>My Guesses</td>
+                        <td data-bind="visible: !opponentIsComputer()">Their Guesses</td>
+                        <td data-bind="visible: opponentIsComputer() && gameState() != 'done'">Hints (<a href="#" data-bind="click: $root.currentGameState().resetHelps.bind($root)">Reset</a>)</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td valign="top">
+                            <table border="1" cellpadding="3">
+                                <thead>
+                                    <tr>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>Guess</td>
+                                        <td>Score</td>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: myGuesses">
+                                    <tr>
+                                        <td align="right" data-bind="text: ($index()+1)"></td>
+                                        <td data-bind="text: word"></td>
+                                        <td data-bind="text: (score == 6) ? 'JOTTO' : score" align="center"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td valign="top" data-bind="visible: opponentIsComputer() && gameState() != 'done'">
+                            <table cellpadding="3">
+                                <tr>
+                                    <td>Known In</td>
+                                    <td data-bind="text: helps().knownIn"></td>
+                                </tr>
+                                <tr>
+                                    <td>Known Out</td>
+                                    <td data-bind="text: helps().knownOut"></td>
+                                </tr>
+                                <tr>
+                                    <td>Unknown</td>
+                                    <td data-bind="text: helps().unknown"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">Commands</td>
+                                    <td>
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div data-bind="foreach: 'abcde'">
+                                                            <a href="#" data-bind="text: $data+'-', click: $root.currentGameState().supplyUnknownHint.bind($root, $data+'-')"></a>
+                                                            <a href="#" data-bind="text: $data+'+', click: $root.currentGameState().supplyUnknownHint.bind($root, $data+'+')"></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div data-bind="foreach: 'fghij'">
+                                                            <a href="#" data-bind="text: $data+'-', click: $root.currentGameState().supplyUnknownHint.bind($root, $data+'-')"></a>
+                                                            <a href="#" data-bind="text: $data+'+', click: $root.currentGameState().supplyUnknownHint.bind($root, $data+'+')"></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div data-bind="foreach: 'klmno'">
+                                                            <a href="#" data-bind="text: $data+'-', click: $root.currentGameState().supplyUnknownHint.bind($root, $data+'-')"></a>
+                                                            <a href="#" data-bind="text: $data+'+', click: $root.currentGameState().supplyUnknownHint.bind($root, $data+'+')"></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div data-bind="foreach: 'pqrst'">
+                                                            <a href="#" data-bind="text: $data+'-', click: $root.currentGameState().supplyUnknownHint.bind($root, $data+'-')"></a>
+                                                            <a href="#" data-bind="text: $data+'+', click: $root.currentGameState().supplyUnknownHint.bind($root, $data+'+')"></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div data-bind="foreach: 'uvwxyz'">
+                                                            <a href="#" data-bind="text: $data+'-', click: $root.currentGameState().supplyUnknownHint.bind($root, $data+'-')"></a>
+                                                            <a href="#" data-bind="text: $data+'+', click: $root.currentGameState().supplyUnknownHint.bind($root, $data+'+')"></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">Clues</td>
+                                    <td data-bind="foreach: helps().clues">
+                                        <div data-bind="text: $data"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td valign="top" data-bind="visible: !opponentIsComputer()">
+                            <table border="1" cellpadding="3">
+                                <thead>
+                                    <tr>
+                                        <td>&nbsp;&nbsp;</td>
+                                        <td>Guess</td>
+                                        <td>Score</td>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: opponentGuesses">
+                                    <tr>
+                                        <td align="right" data-bind="text: ($index()+1)"></td>
+                                        <td data-bind="text: word"></td>
+                                        <td data-bind="text: (score == 6) ? 'JOTTO' : score" align="center"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div data-bind="visible: gameState() == 'done'">
+                <form data-bind="submit: currentGameState().resetGame">
+                    <button type="submit">Start a new game</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
