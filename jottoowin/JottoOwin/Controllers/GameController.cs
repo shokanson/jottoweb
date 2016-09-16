@@ -182,9 +182,11 @@ namespace JottoOwin.Controllers
 			switch (hint.Command)
 			{
 				case "knownin":
-					return await RemoveKnownInAsync(gameId, hint);
+					if (string.IsNullOrEmpty(hint.Letter) || hint.Letter.Length != 1) return BadRequest($"bad hint letter: '{hint.Letter}'");
+					return await RemoveKnownInAsync(gameId, hint.PlayerId, hint.Letter[0]);
 				case "knownout":
-					return await RemoveKnownOutAsync(gameId, hint);
+					if (string.IsNullOrEmpty(hint.Letter) || hint.Letter.Length != 1) return BadRequest($"bad hint letter: '{hint.Letter}'");
+					return await RemoveKnownOutAsync(gameId, hint.PlayerId, hint.Letter[0]);
 				case "+":
 				case "-":
 					return await InformHelperAsync(gameId, hint);
@@ -208,54 +210,48 @@ namespace JottoOwin.Controllers
 			}
 		}
 
-		// POSTing a letter to /knownin means "remove that letter from known in and add to unknown"
-		[HttpPost]
-		[Route("{gameId}/helps/knownin")]
-		public async Task<IHttpActionResult> RemoveKnownInAsync(string gameId, [FromBody] HelperHintModel hint)
+		[HttpDelete]
+		[Route("{gameId}/{playerId}/helps/knownin/{c}")]
+		public async Task<IHttpActionResult> RemoveKnownInAsync(string gameId, string playerId, char c)
 		{
 			// validation
 			JottoGame game = await _repo.GetGameAsync(gameId);
 			if (game == null) return NotFound();
 
-			if (string.IsNullOrEmpty(hint.Letter)) return BadRequest("hint letter must be provided");
-
 			JottoGameHelper helper;
 			lock (Helpers)
 			{
 				if (Helpers[game.Id] == null) return BadRequest("cannot add hint for completed game");
-				if (!Helpers[game.Id].TryGetValue(hint.PlayerId, out helper)) return BadRequest("hint for non-existent player");
+				if (!Helpers[game.Id].TryGetValue(playerId, out helper)) return BadRequest("hint for non-existent player");
 				if (helper == null) return BadRequest("cannot add hint for player who already got jotto");
 			}
 
 			// logic
-			helper.RemoveKnownIn(hint.Letter[0]);
+			helper.RemoveKnownIn(c);
 
-			return Ok(hint);
+			return Ok();
 		}
 
-		// POSTing a letter to /knownout means "remove that letter from known out and add to unknown"
-		[HttpPost]
-		[Route("{gameId}/helps/knownout")]
-		public async Task<IHttpActionResult> RemoveKnownOutAsync(string gameId, [FromBody] HelperHintModel hint)
+		[HttpDelete]
+		[Route("{gameId}/{playerId}/helps/knownout/c")]
+		public async Task<IHttpActionResult> RemoveKnownOutAsync(string gameId, string playerId, char c)
 		{
 			// validation
 			JottoGame game = await _repo.GetGameAsync(gameId);
 			if (game == null) return NotFound();
 
-			if (string.IsNullOrEmpty(hint.Letter)) return BadRequest("hint letter must be provided");
-
 			JottoGameHelper helper;
 			lock (Helpers)
 			{
 				if (Helpers[game.Id] == null) return BadRequest("cannot add hint for completed game");
-				if (!Helpers[game.Id].TryGetValue(hint.PlayerId, out helper)) return BadRequest("hint for non-existent player");
+				if (!Helpers[game.Id].TryGetValue(playerId, out helper)) return BadRequest("hint for non-existent player");
 				if (helper == null) return BadRequest("cannot add hint for player who already got jotto");
 			}
 
 			// logic
-			helper.RemoveKnownOut(hint.Letter[0]);
+			helper.RemoveKnownOut(c);
 
-			return Ok(hint);
+			return Ok();
 		}
 
 		// POSTing a letter to helps/unknown means one of three things;
