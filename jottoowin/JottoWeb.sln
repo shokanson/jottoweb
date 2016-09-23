@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JottoOwin", "JottoOwin\Jott
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hokanson.JottoRepository", "Hokanson.JottoRepository\Hokanson.JottoRepository.csproj", "{CB61531D-1718-4C37-BECC-C5CCC0E33C6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hokanson.JottoHelper", "..\JottoHelper\Hokanson.JottoHelper\Hokanson.JottoHelper.csproj", "{B2D6C069-51FA-4A00-9961-A193C9B000AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hokanson.JottoHelper", "Hokanson.JottoHelper\Hokanson.JottoHelper.csproj", "{B2D6C069-51FA-4A00-9961-A193C9B000AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSTest.Hokanson.JottoHelper", "..\jottohelper\MSTest.Hokanson.JottoHelper\MSTest.Hokanson.JottoHelper.csproj", "{AC6C4E59-E382-46CD-A2E2-90AC6ED0651F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSTest.Hokanson.JottoHelper", "MSTest.Hokanson.JottoHelper\MSTest.Hokanson.JottoHelper.csproj", "{AC6C4E59-E382-46CD-A2E2-90AC6ED0651F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

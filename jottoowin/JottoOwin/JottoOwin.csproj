@@ -168,7 +168,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\JottoHelper\Hokanson.JottoHelper\Hokanson.JottoHelper.csproj">
+    <ProjectReference Include="..\Hokanson.JottoHelper\Hokanson.JottoHelper.csproj">
       <Project>{b2d6c069-51fa-4a00-9961-a193c9b000ac}</Project>
       <Name>Hokanson.JottoHelper</Name>
     </ProjectReference>
