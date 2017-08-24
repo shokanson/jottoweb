@@ -42,7 +42,9 @@
   <ItemGroup>
     <Compile Include="Exceptions\FkException.cs" />
     <Compile Include="Exceptions\PkException.cs" />
+    <Compile Include="FileWordList.cs" />
     <Compile Include="IJottoRepository.cs" />
+    <Compile Include="IWordList.cs" />
     <Compile Include="JottoRepository.cs" />
     <Compile Include="Models\JottoGame.cs" />
     <Compile Include="Models\JottoPlayer.cs" />

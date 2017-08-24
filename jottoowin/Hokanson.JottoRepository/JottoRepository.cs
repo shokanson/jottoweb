@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,23 +10,8 @@ namespace Hokanson.JottoRepository
 
 	public class JottoRepository : IJottoRepository
 	{
-		private static readonly Dictionary<string, JottoGame> Games = new Dictionary<string, JottoGame>();  // gameId -> game
-		private static readonly HashSet<string> Words = new HashSet<string>();
-		private static readonly Dictionary<string, List<PlayerGuess>> Guesses = new Dictionary<string, List<PlayerGuess>>();    // gameId -> list of guesses
-		private static readonly Dictionary<string, JottoPlayer> Players = new Dictionary<string, JottoPlayer>();    // playerId -> player
-
-		static JottoRepository()
+        static JottoRepository()
 		{
-			System.Diagnostics.Trace.TraceInformation(AppDomain.CurrentDomain.BaseDirectory + "\\fiveletterwords.lst");
-			using (var reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\fiveletterwords.lst"))
-			{
-				while (!reader.EndOfStream)
-				{
-					var line = reader.ReadLine();
-					if (!string.IsNullOrEmpty(line)) Words.Add(line);
-				}
-			}
-
 			var jottoPlayer = new JottoPlayer
 			{
 				IsComputer = true,
@@ -37,16 +21,24 @@ namespace Hokanson.JottoRepository
 			Players[jottoPlayer.Id] = jottoPlayer;
 		}
 
-		public Task<string> GetRandomWordAsync()
+        public JottoRepository(IWordList words)
+        {
+            _words = words;
+        }
+
+        private readonly IWordList _words;
+        private static readonly Dictionary<string, JottoGame> Games = new Dictionary<string, JottoGame>();  // gameId -> game
+        private static readonly Dictionary<string, List<PlayerGuess>> Guesses = new Dictionary<string, List<PlayerGuess>>();    // gameId -> list of guesses
+        private static readonly Dictionary<string, JottoPlayer> Players = new Dictionary<string, JottoPlayer>();    // playerId -> player
+
+        public Task<string> GetRandomWordAsync()
 		{
-			return Task.FromResult(Words.Skip(new Random().Next(0, Words.Count))
-												 .Take(1)
-												 .First());
+			return Task.FromResult(_words.GetRandomWord());
 		}
 
 		public Task<bool> IsWordAsync(string word)
 		{
-			return Task.FromResult(Words.Contains(word));
+			return Task.FromResult(_words.IsWordInList(word));
 		}
 
 		public Task<JottoPlayer> AddPlayerAsync(string name)

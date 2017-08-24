@@ -13,6 +13,7 @@ using System.Web.Http;
 namespace JottoOwin
 {
     using Services;
+    using System.IO;
 
     public class Startup
     {
@@ -50,6 +51,11 @@ namespace JottoOwin
 
             // add other bindings here as necessary
             kernel.Bind<IJottoRepository>().To<JottoRepository>();
+
+            kernel.Bind<IWordList>()
+                  .To<FileWordList>()
+                  .InSingletonScope()
+                  .WithConstructorArgument(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fiveletterwords.lst"));
 
             return kernel;
         }
