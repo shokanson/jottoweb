@@ -38,7 +38,7 @@ namespace Hokanson.JottoRepository
 
 		public Task<bool> IsWordAsync(string word)
 		{
-			return Task.FromResult(_words.IsWordInList(word));
+			return Task.FromResult(_words.IsWordInList(word.ToLower()));
 		}
 
 		public Task<JottoPlayer> AddPlayerAsync(string name)
