@@ -59,11 +59,11 @@ namespace Hokanson.JottoHelper
 		private readonly List<char> _knownOut = new List<char>();
 		private Dictionary<string, int> _clues;
 
-		public IReadOnlyDictionary<char, int> KnownIn { get { return _knownIn; } }
-		public IReadOnlyCollection<char> KnownOut { get { return _knownOut; } }
-		public IReadOnlyDictionary<string, int> Clues { get { return _clues; } }
+        public IReadOnlyDictionary<char, int> KnownIn => _knownIn;
+        public IReadOnlyCollection<char> KnownOut => _knownOut;
+        public IReadOnlyDictionary<string, int> Clues => _clues;
 
-		public void HandleGuess(string word, int score)
+        public void HandleGuess(string word, int score)
 		{
 			if (string.IsNullOrEmpty(word) || word.Length != 5) throw new ArgumentException("word must be five letters long");
 			// normalize before proceeding
@@ -233,12 +233,6 @@ namespace Hokanson.JottoHelper
 			}
 		}
 
-		private string KnownOutStr
-		{
-			get
-			{
-				return new string(_knownOut.ToArray());
-			}
-		}
-	}
+        private string KnownOutStr => new string(_knownOut.ToArray());
+    }
 }

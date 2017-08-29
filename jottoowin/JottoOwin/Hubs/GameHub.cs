@@ -23,15 +23,9 @@ namespace JottoOwin.Hubs
                                 }));
         }
 
-        public Task JoinGame(string gameId)
-        {
-            return Groups.Add(Context.ConnectionId, gameId);
-        }
+        public Task JoinGame(string gameId) => Groups.Add(Context.ConnectionId, gameId);
 
-        public Task LeaveGame(string gameId)
-        {
-            return Groups.Remove(Context.ConnectionId, gameId);
-        }
+        public Task LeaveGame(string gameId) => Groups.Remove(Context.ConnectionId, gameId);
 
         public static void NotifyClientsOfPlayerAdded(JottoPlayer jottoPlayer)
         {
@@ -88,12 +82,10 @@ namespace JottoOwin.Hubs
 
         #region IContractResolver Members
 
-        public JsonContract ResolveContract(Type type)
-        {
-            return type.Assembly.Equals(_assembly)
+        public JsonContract ResolveContract(Type type) =>
+            type.Assembly.Equals(_assembly)
                 ? _defaultContractResolver.ResolveContract(type)
                 : _camelCaseContractResolver.ResolveContract(type);
-        }
 
         #endregion
     }
