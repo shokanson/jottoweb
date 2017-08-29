@@ -151,8 +151,7 @@ namespace JottoOwin.Controllers
 			var helperModels = new List<GameHelperModel>();
 			if (helpers != null)
 			{
-				JottoGameHelper helper;
-				if (helpers.TryGetValue(game.Player1Id, out helper) && helper != null)
+				if (helpers.TryGetValue(game.Player1Id, out JottoGameHelper helper) && helper != null)
 				{
 					helperModels.Add(CreateModelFromHelper(helper));
 				}

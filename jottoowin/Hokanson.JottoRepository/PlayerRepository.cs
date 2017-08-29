@@ -33,10 +33,5 @@ namespace Hokanson.JottoRepository
 
             return Task.FromResult(player);
         }
-
-        public override Task<JottoPlayer> UpdateAsync(string id, JottoPlayer player)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

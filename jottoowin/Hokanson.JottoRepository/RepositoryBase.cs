@@ -10,36 +10,20 @@ namespace Hokanson.JottoRepository
     {
         protected static readonly ConcurrentDictionary<string, T> Objects = new ConcurrentDictionary<string, T>();  // Id -> object
 
-        // sub-classes must implement
-        public abstract Task<T> AddAsync(T obj);
-        public abstract Task<T> UpdateAsync(string id, T obj);
+        // sub-classes should implement if they don't want callers to get the exception
+        public virtual Task<T> AddAsync(T obj) => throw new NotImplementedException();
+        public virtual Task<T> UpdateAsync(string id, T obj) => throw new NotImplementedException();
 
-        public virtual Task<IEnumerable<T>> GetAllAsync()
-        {
-            return Task.FromResult(Objects.Values.AsEnumerable());
-        }
-
-        public virtual Task<IEnumerable<T>> GetAllAsync(Func<T, bool> predicate)
-        {
-            return Task.FromResult(Objects.Values.Where(predicate));
-        }
+        public virtual Task<IEnumerable<T>> GetAllAsync() => Task.FromResult<IEnumerable<T>>(Objects.Values);
+        public virtual Task<IEnumerable<T>> GetAllAsync(Func<T, bool> predicate) => Task.FromResult(Objects.Values.Where(predicate));
+        public virtual Task<T> GetAsync(Func<T, bool> predicate) => Task.FromResult(Objects.Values.FirstOrDefault(predicate));
+        public virtual Task SaveChangesAsync() => Task.FromResult(0);   // essentially a no-op
 
         public virtual Task<T> GetAsync(string id)
         {
-            T obj;
-            Objects.TryGetValue(id, out obj);
+            Objects.TryGetValue(id, out T obj);
 
             return Task.FromResult(obj);
-        }
-
-        public virtual Task<T> GetAsync(Func<T, bool> predicate)
-        {
-            return Task.FromResult(Objects.Values.FirstOrDefault(predicate));
-        }
-
-        public virtual Task SaveChangesAsync()
-        {
-            return Task.FromResult(0);
         }
     }
 }
