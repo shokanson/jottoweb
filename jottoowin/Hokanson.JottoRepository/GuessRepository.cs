@@ -8,7 +8,7 @@ namespace Hokanson.JottoRepository
     using Exceptions;
     using Models;
 
-    public class GuessRepository : IRepository<PlayerGuess>
+    public class GuessRepository : RepositoryBase<PlayerGuess>
     {
         // make sure to lock this for reads/writes
         private static readonly HashSet<PlayerGuess> Guesses = new HashSet<PlayerGuess>();
@@ -22,7 +22,7 @@ namespace Hokanson.JottoRepository
         private readonly IRepository<JottoPlayer> _players;
         private readonly IRepository<JottoGame> _games;
 
-        public async Task<PlayerGuess> AddAsync(PlayerGuess guess)
+        public override async Task<PlayerGuess> AddAsync(PlayerGuess guess)
         {
             // referential integrity
             if (await _games.GetAsync(guess.GameId) == null) throw new FkException("cannot add guess for non-existent game");
@@ -40,22 +40,7 @@ namespace Hokanson.JottoRepository
             return guess;
         }
 
-        public Task<IEnumerable<PlayerGuess>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PlayerGuess> GetAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PlayerGuess> GetAsync(Func<PlayerGuess, bool> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<PlayerGuess>> GetAllAsync(Func<PlayerGuess, bool> predicate)
+        public override Task<IEnumerable<PlayerGuess>> GetAllAsync(Func<PlayerGuess, bool> predicate)
         {
             lock (Guesses)
             {
@@ -63,12 +48,7 @@ namespace Hokanson.JottoRepository
             }
         }
 
-        public Task SaveChangesAsync()
-        {
-            return Task.FromResult(0);
-        }
-
-        public Task<PlayerGuess> UpdateAsync(string id, PlayerGuess guess)
+        public override Task<PlayerGuess> UpdateAsync(string id, PlayerGuess guess)
         {
             throw new NotImplementedException();
         }
