@@ -20,7 +20,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
-    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>2.3</TypeScriptToolsVersion>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <NuGetPackageImportStamp>56c42bc6</NuGetPackageImportStamp>
     <TargetFrameworkProfile />

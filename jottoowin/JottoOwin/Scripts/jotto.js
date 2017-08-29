@@ -1,11 +1,16 @@
 /// <reference path="typings/jquery/jquery.d.ts" />
 /// <reference path="typings/knockout/knockout.d.ts" />
 /// <reference path="typings/signalr/signalr.d.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var viewModel;
 var gameHub;
 var ajaxUtils;
@@ -210,8 +215,9 @@ var StateBase = (function () {
 var BeginState = (function (_super) {
     __extends(BeginState, _super);
     function BeginState() {
-        _super.call(this);
+        var _this = _super.call(this) || this;
         console.log("BeginState");
+        return _this;
     }
     Object.defineProperty(BeginState.prototype, "name", {
         get: function () { return "begin"; },
@@ -251,8 +257,9 @@ var BeginState = (function (_super) {
 var ChooseOpponentState = (function (_super) {
     __extends(ChooseOpponentState, _super);
     function ChooseOpponentState() {
-        _super.call(this);
+        var _this = _super.call(this) || this;
         console.log("ChooseOpponentState");
+        return _this;
     }
     Object.defineProperty(ChooseOpponentState.prototype, "name", {
         get: function () { return "chooseOpponent"; },
@@ -288,8 +295,9 @@ var ChooseOpponentState = (function (_super) {
 var InvitationPendingState = (function (_super) {
     __extends(InvitationPendingState, _super);
     function InvitationPendingState() {
-        _super.call(this);
+        var _this = _super.call(this) || this;
         console.log("InvitationPendingState");
+        return _this;
     }
     Object.defineProperty(InvitationPendingState.prototype, "name", {
         get: function () { return "invitationPending"; },
@@ -307,8 +315,9 @@ var InvitationPendingState = (function (_super) {
 var ChooseWordState = (function (_super) {
     __extends(ChooseWordState, _super);
     function ChooseWordState() {
-        _super.call(this);
+        var _this = _super.call(this) || this;
         console.log("ChooseWordState");
+        return _this;
     }
     Object.defineProperty(ChooseWordState.prototype, "name", {
         get: function () { return "chooseWord"; },
@@ -365,8 +374,9 @@ var ChooseWordState = (function (_super) {
 var WaitingForOpponentToStartState = (function (_super) {
     __extends(WaitingForOpponentToStartState, _super);
     function WaitingForOpponentToStartState() {
-        _super.call(this);
+        var _this = _super.call(this) || this;
         console.log("WaitingForOpponentToStartState");
+        return _this;
     }
     Object.defineProperty(WaitingForOpponentToStartState.prototype, "name", {
         get: function () { return "waitingForOpponentToStart"; },
@@ -397,8 +407,9 @@ var WaitingForOpponentToStartState = (function (_super) {
 var WaitingForOpponentWordState = (function (_super) {
     __extends(WaitingForOpponentWordState, _super);
     function WaitingForOpponentWordState() {
-        _super.call(this);
+        var _this = _super.call(this) || this;
         console.log("WaitingForOpponentWordState");
+        return _this;
     }
     Object.defineProperty(WaitingForOpponentWordState.prototype, "name", {
         get: function () { return "waitingForOpponentWord"; },
@@ -431,8 +442,9 @@ var WaitingForOpponentWordState = (function (_super) {
 var MyTurnState = (function (_super) {
     __extends(MyTurnState, _super);
     function MyTurnState() {
-        _super.call(this);
+        var _this = _super.call(this) || this;
         console.log("MyTurnState");
+        return _this;
     }
     Object.defineProperty(MyTurnState.prototype, "name", {
         get: function () { return "myTurn"; },
@@ -471,6 +483,7 @@ var MyTurnState = (function (_super) {
             if (viewModel.myJotto()) {
                 viewModel.setGameState(new DoneState());
             }
+            // else just stay in MyTurnState
         }
         else {
             // since we're in MyTurnState, normally it would be their turn
@@ -479,6 +492,7 @@ var MyTurnState = (function (_super) {
                     // we've both got jotto, so we're done
                     viewModel.setGameState(new DoneState());
                 }
+                // else it would normally be their turn, but they've got jotto, so stay in MyTurnState
             }
             else {
                 // normal state of affairs
@@ -552,8 +566,9 @@ var MyTurnState = (function (_super) {
 var OpponentTurnState = (function (_super) {
     __extends(OpponentTurnState, _super);
     function OpponentTurnState() {
-        _super.call(this);
+        var _this = _super.call(this) || this;
         console.log("OpponentTurnState");
+        return _this;
     }
     Object.defineProperty(OpponentTurnState.prototype, "name", {
         get: function () { return "opponentTurn"; },
@@ -572,6 +587,7 @@ var OpponentTurnState = (function (_super) {
                     // we've both got jotto, so we're done
                     viewModel.setGameState(new DoneState());
                 }
+                // else it would normally be my turn, but I've got jotto, so stay in OpponentTurnState
             }
             else {
                 // normal state of affairs
@@ -588,8 +604,9 @@ var OpponentTurnState = (function (_super) {
 var WaitingForMyWordState = (function (_super) {
     __extends(WaitingForMyWordState, _super);
     function WaitingForMyWordState() {
-        _super.call(this);
+        var _this = _super.call(this) || this;
         console.log("WaitingForMyWordState");
+        return _this;
     }
     Object.defineProperty(WaitingForMyWordState.prototype, "name", {
         get: function () { return "waitingForMyWord"; },
@@ -615,8 +632,9 @@ var WaitingForMyWordState = (function (_super) {
 var DoneState = (function (_super) {
     __extends(DoneState, _super);
     function DoneState() {
-        _super.call(this);
+        var _this = _super.call(this) || this;
         console.log("DoneState");
+        return _this;
     }
     Object.defineProperty(DoneState.prototype, "name", {
         get: function () { return "done"; },
