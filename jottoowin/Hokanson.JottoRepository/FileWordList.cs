@@ -15,7 +15,7 @@ namespace Hokanson.JottoRepository
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
-                    if (!string.IsNullOrEmpty(line)) _words.Add(line);
+                    if (!string.IsNullOrEmpty(line) && line.Length == 5) _words.Add(line.ToLower());
                 }
             }
         }
@@ -36,7 +36,7 @@ namespace Hokanson.JottoRepository
 
         public bool IsWordInList(string word)
         {
-            return _words.Contains(word);
+            return _words.Contains(word, StringComparer.InvariantCultureIgnoreCase);
         }
     }
 }

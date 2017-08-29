@@ -12,6 +12,7 @@ using System.Web.Http;
 
 namespace JottoOwin
 {
+    using Hokanson.JottoRepository.Models;
     using Services;
     using System.IO;
 
@@ -50,7 +51,9 @@ namespace JottoOwin
             var kernel = new StandardKernel();
 
             // add other bindings here as necessary
-            kernel.Bind<IJottoRepository>().To<JottoRepository>();
+            kernel.Bind<IRepository<JottoPlayer>>().To<PlayerRepository>().InSingletonScope();
+            kernel.Bind<IRepository<JottoGame>>().To<GameRepository>().InSingletonScope();
+            kernel.Bind<IRepository<PlayerGuess>>().To<GuessRepository>().InSingletonScope();
 
             kernel.Bind<IWordList>()
                   .To<FileWordList>()

@@ -43,12 +43,14 @@
     <Compile Include="Exceptions\FkException.cs" />
     <Compile Include="Exceptions\PkException.cs" />
     <Compile Include="FileWordList.cs" />
-    <Compile Include="IJottoRepository.cs" />
+    <Compile Include="GameRepository.cs" />
+    <Compile Include="GuessRepository.cs" />
+    <Compile Include="IRepository.cs" />
     <Compile Include="IWordList.cs" />
-    <Compile Include="JottoRepository.cs" />
     <Compile Include="Models\JottoGame.cs" />
     <Compile Include="Models\JottoPlayer.cs" />
     <Compile Include="Models\PlayerGuess.cs" />
+    <Compile Include="PlayerRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

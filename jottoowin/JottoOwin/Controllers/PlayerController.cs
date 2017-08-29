@@ -15,13 +15,13 @@ namespace JottoOwin.Controllers
         public const string Player = "Player";
         public const string Players = "Players";
 
-        public PlayerController(IJottoRepository repo)
+        public PlayerController(IRepository<JottoPlayer> players)
         {
-            _repo = repo;
+            _players = players;
         }
 
-        private readonly IJottoRepository _repo;
-        
+        private readonly IRepository<JottoPlayer> _players;
+
         [HttpPost]
         [Route("")]
         public async Task<IHttpActionResult> RegisterPlayerAsync([FromBody] string player)
@@ -31,7 +31,8 @@ namespace JottoOwin.Controllers
 
             try
             {
-                var jottoPlayer = await _repo.AddPlayerAsync(player);
+                var jottoPlayer = await _players.AddAsync(new JottoPlayer { Name = player });
+                await _players.SaveChangesAsync();
 
                 GameHub.NotifyClientsOfPlayerAdded(jottoPlayer);
 
@@ -47,7 +48,7 @@ namespace JottoOwin.Controllers
         [Route("", Name = Players)]
         public async Task<IHttpActionResult> GetPlayersAsync()
         {
-            return Ok(await _repo.GetPlayersAsync());
+            return Ok(await _players.GetAllAsync());
         }
 
         [HttpGet]
@@ -58,11 +59,11 @@ namespace JottoOwin.Controllers
             Guid guid;
             if (Guid.TryParse(playerIdOrName, out guid))
             {
-                player = await _repo.GetPlayerByIdAsync(playerIdOrName);
+                player = await _players.GetAsync(playerIdOrName);
             }
             else
             {
-                player = await _repo.GetPlayerByNameAsync(playerIdOrName);
+                player = await _players.GetAsync(p => p.Name == playerIdOrName);
             }
             
             if (player == null) return NotFound();

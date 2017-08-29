@@ -25,43 +25,55 @@ namespace JottoOwin.Controllers
 		public const string Guesses = "Guesses";
 		public const string Helps = "Helps";
 
-		public GameController(IJottoRepository repo)
+		public GameController(IWordList words, IRepository<JottoPlayer> players, IRepository<JottoGame> games, IRepository<PlayerGuess> guesses)
 		{
-			_repo = repo;
-		}
+            _words = words;
+            _players = players;
+            _games = games;
+            _guesses = guesses;
+        }
 
-		private readonly IJottoRepository _repo;
+        private readonly IWordList _words;
+        private readonly IRepository<JottoPlayer> _players;
+        private readonly IRepository<JottoGame> _games;
+        private readonly IRepository<PlayerGuess> _guesses;
+        private static readonly Dictionary<string, Dictionary<string, JottoGameHelper>> Helpers = new Dictionary<string, Dictionary<string, JottoGameHelper>>();
 
-		private static readonly Dictionary<string, Dictionary<string, JottoGameHelper>> Helpers = new Dictionary<string, Dictionary<string, JottoGameHelper>>();
+        [HttpPost]
+        [Route(Name = StartGame)]
+        public async Task<IHttpActionResult> StartGameAsync([FromBody] JottoGameModel game)
+        {
+            //  invariants:
+            //      player1 must always be human
 
-		[HttpPost]
-		[Route(Name = StartGame)]
-		public async Task<IHttpActionResult> StartGameAsync([FromBody] JottoGameModel game)
-		{
-			//  invariants:
-			//      player1 must always be human
+            // validation
+            JottoPlayer player1 = await _players.GetAsync(game.Player1Id);
+            JottoPlayer player2 = await _players.GetAsync(game.Player2Id);
 
-			// validation
-			JottoPlayer player1 = await _repo.GetPlayerByIdAsync(game.Player1Id);
-			JottoPlayer player2 = await _repo.GetPlayerByIdAsync(game.Player2Id);
+            if (player1 == null) return BadRequest("player1 refers to non-existent player");
+            if (player2 == null) return BadRequest("player2 refers to non-existent player");
 
-			if (player1 == null) return BadRequest("player1 refers to non-existent player");
-			if (player2 == null) return BadRequest("player2 refers to non-existent player");
+            if (player1.IsComputer) return BadRequest("player 1 must be human");
 
-			if (player1.IsComputer) return BadRequest("player 1 must be human");
+            if (!player2.IsComputer && string.IsNullOrEmpty(game.Word1))
+                return BadRequest("player 1 must provide a word if not playing against the computer");
+            // note, it's OK for player 2 not to have provided a word yet
 
-			if (!player2.IsComputer && string.IsNullOrEmpty(game.Word1))
-				return BadRequest("player 1 must provide a word if not playing against the computer");
-			// note, it's OK for player 2 not to have provided a word yet
+            // logic
 
-			// logic
+            // get computer word
+            if (player2.IsComputer) game.Word2 = _words.GetRandomWord();
 
-			// get computer word
-			if (player2.IsComputer) game.Word2 = await _repo.GetRandomWordAsync();
+            JottoGame jottoGame = await _games.AddAsync(new JottoGame
+            {
+                Player1Id = game.Player1Id,
+                Player2Id = game.Player2Id,
+                Word1 = game.Word1,
+                Word2 = game.Word2
+            });
+            await _games.SaveChangesAsync();
 
-			JottoGame jottoGame = await _repo.AddGameAsync(game.Player1Id, game.Player2Id, game.Word1, game.Word2);
-
-			SetupHelpers(player2, jottoGame);
+            SetupHelpers(player2, jottoGame);
 
 			GameHub.NotifyClientsOfGameStarted(jottoGame);
 
@@ -72,10 +84,12 @@ namespace JottoOwin.Controllers
 		[Route("{gameId}")]
 		public async Task<IHttpActionResult> UpdateGameAsync(string gameId, [FromBody] string word2)
 		{
-			var game = await _repo.GetGameAsync(gameId);
+			var game = await _games.GetAsync(gameId);
 			if (game == null) return NotFound();
 
-			game = await _repo.UpdateGameWord2Async(gameId, word2);
+            game.Word2 = word2;
+			game = await _games.UpdateAsync(gameId, game);
+            await _games.SaveChangesAsync();
 
 			GameHub.NotifyClientsOfGameUpdated(game);
 
@@ -86,7 +100,7 @@ namespace JottoOwin.Controllers
 		[Route("{gameId}", Name = Game)]
 		public async Task<IHttpActionResult> GetGameAsync(string gameId)
 		{
-			var game = await _repo.GetGameAsync(gameId);
+			var game = await _games.GetAsync(gameId);
 
 			if (game == null) return NotFound();
 
@@ -97,25 +111,26 @@ namespace JottoOwin.Controllers
 		[Route(Name = Games)]
 		public async Task<IHttpActionResult> GetGamesAsync()
 		{
-			return Ok(await _repo.GetGamesAsync());
+			return Ok(await _games.GetAllAsync());
 		}
 
 		[HttpGet]
 		[Route("latest", Name = LatestGame)]
 		public async Task<IHttpActionResult> GetLatestGameAsync()
 		{
-			var games = await _repo.GetGamesAsync();
+            // hate this implementation
+			var games = await _games.GetAllAsync();
 			if (games.Count() == 0) return Ok();
 
 			var maxTicks = games.Max(g => g.CreationDate.Ticks);
-			return Ok(await _repo.FindGameAsync(g => g.CreationDate.Ticks == maxTicks));
+			return Ok(await _games.GetAsync(g => g.CreationDate.Ticks == maxTicks));
 		}
 
 		[HttpGet]
 		[Route("{gameId}/guesses", Name = Guesses)]
 		public async Task<IHttpActionResult> GetGuessesAsync(string gameId)
 		{
-			return Ok(await _repo.GetGuessesForGameAsync(gameId));
+			return Ok(await _guesses.GetAllAsync(g => g.GameId == gameId));
 		}
 
 		[HttpGet]
@@ -123,7 +138,7 @@ namespace JottoOwin.Controllers
 		public async Task<IHttpActionResult> GetHelpsAsync(string gameId)
 		{
 			// validation
-			JottoGame game = await _repo.GetGameAsync(gameId);
+			JottoGame game = await _games.GetAsync(gameId);
 			if (game == null) return NotFound();
 
 			// build response
@@ -175,7 +190,7 @@ namespace JottoOwin.Controllers
 		public async Task<IHttpActionResult> SupplyCommandAsync(string gameId, [FromBody] HelperHintModel hint)
 		{
 			// validation
-			JottoGame game = await _repo.GetGameAsync(gameId);
+			JottoGame game = await _games.GetAsync(gameId);
 			if (game == null) return NotFound();
 
 			// logic
@@ -215,7 +230,7 @@ namespace JottoOwin.Controllers
 		public async Task<IHttpActionResult> RemoveKnownInAsync(string gameId, string playerId, char c)
 		{
 			// validation
-			JottoGame game = await _repo.GetGameAsync(gameId);
+			JottoGame game = await _games.GetAsync(gameId);
 			if (game == null) return NotFound();
 
 			JottoGameHelper helper;
@@ -237,7 +252,7 @@ namespace JottoOwin.Controllers
 		public async Task<IHttpActionResult> RemoveKnownOutAsync(string gameId, string playerId, char c)
 		{
 			// validation
-			JottoGame game = await _repo.GetGameAsync(gameId);
+			JottoGame game = await _games.GetAsync(gameId);
 			if (game == null) return NotFound();
 
 			JottoGameHelper helper;
@@ -264,7 +279,7 @@ namespace JottoOwin.Controllers
 		public async Task<IHttpActionResult> InformHelperAsync(string gameId, [FromBody] HelperHintModel hint)
 		{
 			// validation
-			JottoGame game = await _repo.GetGameAsync(gameId);
+			JottoGame game = await _games.GetAsync(gameId);
 			if (game == null) return NotFound();
 
 			if (string.IsNullOrEmpty(hint.Letter)) return BadRequest("hint letter must be provided");
@@ -303,16 +318,16 @@ namespace JottoOwin.Controllers
 		public async Task<IHttpActionResult> MakeGuessAsync(string gameId, [FromBody] JottoGuessModel guess)
 		{
 			// validation
-			JottoGame game = await _repo.GetGameAsync(gameId);
+			JottoGame game = await _games.GetAsync(gameId);
 			if (game == null) return NotFound();
 			if (string.IsNullOrEmpty(game.Word2)) return BadRequest("game not ready to begin--player 2's word hasn't been provided yet");
 			if (string.IsNullOrEmpty(guess.Guess) || guess.Guess.Length != 5) return BadRequest("guess must be 5 letters");
-			if (!await _repo.IsWordAsync(guess.Guess)) return BadRequest(string.Format("'{0}' not in allowed word list", guess.Guess));
+			if (!_words.IsWordInList(guess.Guess)) return BadRequest(string.Format("'{0}' not in allowed word list", guess.Guess));
 
-			JottoPlayer player = await _repo.GetPlayerByIdAsync(guess.PlayerId);
+			JottoPlayer player = await _players.GetAsync(guess.PlayerId);
 			if (player == null) return BadRequest("player doesn't exist");
 
-			JottoPlayer forPlayer = await _repo.GetPlayerByIdAsync(guess.ForPlayerId);
+			JottoPlayer forPlayer = await _players.GetAsync(guess.ForPlayerId);
 			if (forPlayer == null) return BadRequest("\"for\" player doesn't exist");
 
 			// logic
@@ -324,10 +339,17 @@ namespace JottoOwin.Controllers
 				 jottoWord.IsJotto(guess.Guess)
 					  ? 6 // 6 means JOTTO
 					  : jottoWord.GetCount(guess.Guess);
-			PlayerGuess playerGuess;
+			var playerGuess = new PlayerGuess
+            {
+                GameId = gameId,
+                PlayerId = guess.PlayerId,
+                Word = guess.Guess,
+                Score = guessVal
+            };
 			try
 			{
-				playerGuess = await _repo.AddPlayerGuessAsync(gameId, guess.PlayerId, guess.Guess, guessVal);
+				playerGuess = await _guesses.AddAsync(playerGuess);
+                await _guesses.SaveChangesAsync();
 
 				if (playerGuess.Score == 6)
 				{
