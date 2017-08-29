@@ -41,7 +41,8 @@ namespace Hokanson.JottoRepository
 
         public Task<JottoGame> GetAsync(string id)
         {
-            Games.TryGetValue(id, out JottoGame game);
+            JottoGame game;
+            Games.TryGetValue(id, out game);
 
             return Task.FromResult(game);
         }
