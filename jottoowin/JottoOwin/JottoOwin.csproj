@@ -137,6 +137,7 @@
     <None Include="Properties\PublishProfiles\jotto - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\jotto.pubxml" />
     <Content Include="Scripts\jquery-3.1.0.min.js" />
+    <Content Include="tsconfig.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -706,4 +706,3 @@ $(document).ready(function () {
     // help the user
     $("#registerTxt").focus();
 });
-//# sourceMappingURL=jotto.js.map
