@@ -25,7 +25,7 @@ namespace Hokanson.JottoRepository
             if (await _players.GetAsync(guess.PlayerId) == null) throw new FkException("cannot add guess for non-existent player");
 
             // primary key
-            if (Objects.Values.FirstOrDefault(g => g.PlayerId == guess.PlayerId && g.Word == guess.Word) != null)
+            if (Objects.Values.FirstOrDefault(g => g.GameId == guess.GameId && g.PlayerId == guess.PlayerId && g.Word == guess.Word) != null)
                 throw new PkException("cannot add guess for existing game, player, and word");
 
             guess.Id = Guid.NewGuid().ToString();
