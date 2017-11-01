@@ -109,10 +109,7 @@ namespace JottoOwin.Controllers
 
 		[HttpGet]
 		[Route(Name = Games)]
-		public async Task<IHttpActionResult> GetGamesAsync()
-		{
-			return Ok(await _games.GetAllAsync());
-		}
+		public async Task<IHttpActionResult> GetGamesAsync() => Ok(await _games.GetAllAsync());
 
 		[HttpGet]
 		[Route("latest", Name = LatestGame)]
@@ -128,10 +125,7 @@ namespace JottoOwin.Controllers
 
 		[HttpGet]
 		[Route("{gameId}/guesses", Name = Guesses)]
-		public async Task<IHttpActionResult> GetGuessesAsync(string gameId)
-		{
-			return Ok(await _guesses.GetAllAsync(g => g.GameId == gameId));
-		}
+		public async Task<IHttpActionResult> GetGuessesAsync(string gameId) => Ok(await _guesses.GetAllAsync(g => g.GameId == gameId));
 
 		[HttpGet]
 		[Route("{gameId}/helps", Name = Helps)]
