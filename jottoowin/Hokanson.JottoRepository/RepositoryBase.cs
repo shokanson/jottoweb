@@ -17,7 +17,7 @@ namespace Hokanson.JottoRepository
         public virtual Task<IEnumerable<T>> GetAllAsync() => Task.FromResult<IEnumerable<T>>(Objects.Values);
         public virtual Task<IEnumerable<T>> GetAllAsync(Func<T, bool> predicate) => Task.FromResult(Objects.Values.Where(predicate));
         public virtual Task<T> GetAsync(Func<T, bool> predicate) => Task.FromResult(Objects.Values.FirstOrDefault(predicate));
-        public virtual Task SaveChangesAsync() => Task.FromResult(0);   // essentially a no-op
+        public virtual Task SaveChangesAsync() => Task.CompletedTask;   // essentially a no-op
 
         public virtual Task<T> GetAsync(string id)
         {
