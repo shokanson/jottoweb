@@ -21,5 +21,5 @@ More than can be enumerated, but here are some that need work, in no particular 
 	* Use the SignalR eventing to handle state changes?  This is the current paradigm.
 * Probably some bugs in the state management for setting up a two-player game.  Once the game has started, should be OK.
 * Absolutely no idea about performance/stability under load (i.e. with lots of games in progress)
-* I can't remember how I generated the word list (got it online somewhere), but it's got a LOT of obscure and possibly even invalid words.  Should be edited.  Then again, it does provide some incentive to keep going until you find all the letters.
+* I can't remember how I generated the word list (got it online somewhere), but it's got a LOT of obscure words.  It could be edited, but it does provide some incentive to keep going until you find all the letters.
 * Probably needs an "I Give Up" button.
