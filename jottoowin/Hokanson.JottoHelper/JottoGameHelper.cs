@@ -172,6 +172,11 @@ namespace Hokanson.JottoHelper
 						AddRemainingToKnownIn(remaining.Item1);
 						done = false;
 					}
+                    else if (remaining.Item2 > 0 && AllTheSameLetter(remaining.Item1))
+                    {
+                        AddRemainingToKnownIn(new string(remaining.Item1[0], remaining.Item2));
+                        done = false;
+                    }
 					else if (remaining.Item1.Length > 0)
 					{
 						var clue = new string(remaining.Item1.ToArray().OrderBy(c => c).ToArray());
@@ -193,7 +198,12 @@ namespace Hokanson.JottoHelper
 			_clues = clues;
 		}
 
-		private void AddRemainingToKnownIn(string s)
+        private bool AllTheSameLetter(string s)
+        {
+            return s.GroupBy(c => c).Count() == 1;
+        }
+
+        private void AddRemainingToKnownIn(string s)
 		{
 			foreach (var c in s)
 			{
