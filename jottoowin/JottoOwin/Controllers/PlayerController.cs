@@ -77,8 +77,8 @@ namespace JottoOwin.Controllers
 
             if (player == null) return NotFound();
 
-            int nGuesses = 0;
-            int nGames = 0;
+            double nGuesses = 0;
+            double nGames = 0;
             var playerGames = await _games.GetAllAsync(game => game.Player1Id == player.Id || game.Player2Id == player.Id);
             foreach (var game in playerGames)
             {
@@ -91,7 +91,7 @@ namespace JottoOwin.Controllers
                 }
             }
             
-            return Ok(nGames == 0 ? (double)0 : nGuesses/nGames);
+            return Ok(nGames == 0.0 ? 0.0 : nGuesses/ nGames);
         }
     }
 }
