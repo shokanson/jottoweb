@@ -17,14 +17,16 @@ namespace JottoOwin.Controllers
 		public const string Players = "Players";
         public const string PlayerAverage = "PlayerAverage";
 
-        public PlayerController(IRepository<JottoPlayer> players, IRepository<JottoGame> games)
+        public PlayerController(IRepository<JottoPlayer> players, IRepository<JottoGame> games, IRepository<PlayerGuess> guesses)
 		{
 			_players = players;
             _games = games;
+            _guesses = guesses;
 		}
 
 		private readonly IRepository<JottoPlayer> _players;
         private readonly IRepository<JottoGame> _games;
+        private readonly IRepository<PlayerGuess> _guesses;
 
         [HttpPost]
 		[Route("")]
@@ -74,8 +76,22 @@ namespace JottoOwin.Controllers
                 : await _players.GetAsync(p => p.Name == playerIdOrName);
 
             if (player == null) return NotFound();
-                        
-            return Ok((await _games.GetAllAsync(game => game.Player1Id == player.Id || game.Player2Id == player.Id)).Count());
+
+            int nGuesses = 0;
+            int nGames = 0;
+            var playerGames = await _games.GetAllAsync(game => game.Player1Id == player.Id || game.Player2Id == player.Id);
+            foreach (var game in playerGames)
+            {
+                var gameGuesses = await _guesses.GetAllAsync(guess => guess.GameId == game.Id && guess.PlayerId == player.Id);
+                // only include concluded games
+                if (gameGuesses.Any(guess => guess.Score == 6))
+                {
+                    nGames++;
+                    nGuesses += gameGuesses.Count();
+                }
+            }
+            
+            return Ok(nGames == 0 ? 0 : nGuesses/nGames);
         }
     }
 }
