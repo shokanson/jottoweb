@@ -91,7 +91,7 @@ namespace JottoOwin.Controllers
                 }
             }
             
-            return Ok(nGames == 0 ? 0 : nGuesses/nGames);
+            return Ok(nGames == 0 ? (double)0 : nGuesses/nGames);
         }
     }
 }
