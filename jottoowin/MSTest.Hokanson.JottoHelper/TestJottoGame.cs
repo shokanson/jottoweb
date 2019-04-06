@@ -3169,5 +3169,311 @@ namespace MSTest.Hokanson.JottoHelper
             Assert.IsTrue(helper.Clues.ContainsKey("ghl"));
             Assert.AreEqual(1, helper.Clues["ghl"]);
         }
+
+        [TestMethod]
+        public void TestGame11()
+        {
+            var helper = new JottoGameHelper();
+
+            helper.HandleGuess("fight", 1);
+            Assert.AreEqual(0, helper.KnownIn.Count);
+            Assert.AreEqual(0, helper.KnownOut.Count);
+            Assert.AreEqual(1, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("fghit"));
+            Assert.AreEqual(1, helper.Clues["fghit"]);
+
+            helper.HandleGuess("jumpy", 1);
+            Assert.AreEqual(0, helper.KnownIn.Count);
+            Assert.AreEqual(0, helper.KnownOut.Count);
+            Assert.AreEqual(2, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("fghit"));
+            Assert.AreEqual(1, helper.Clues["fghit"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+
+            helper.HandleGuess("banks", 1);
+            Assert.AreEqual(0, helper.KnownIn.Count);
+            Assert.AreEqual(0, helper.KnownOut.Count);
+            Assert.AreEqual(3, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("fghit"));
+            Assert.AreEqual(1, helper.Clues["fghit"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkns"));
+            Assert.AreEqual(1, helper.Clues["abkns"]);
+
+            helper.HandleGuess("crowd", 2);
+            Assert.AreEqual(0, helper.KnownIn.Count);
+            Assert.AreEqual(0, helper.KnownOut.Count);
+            Assert.AreEqual(4, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("fghit"));
+            Assert.AreEqual(1, helper.Clues["fghit"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkns"));
+            Assert.AreEqual(1, helper.Clues["abkns"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cdorw"));
+            Assert.AreEqual(2, helper.Clues["cdorw"]);
+
+            helper.HandleGuess("roust", 2);
+            Assert.AreEqual(0, helper.KnownIn.Count);
+            Assert.AreEqual(0, helper.KnownOut.Count);
+            Assert.AreEqual(5, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("fghit"));
+            Assert.AreEqual(1, helper.Clues["fghit"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkns"));
+            Assert.AreEqual(1, helper.Clues["abkns"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cdorw"));
+            Assert.AreEqual(2, helper.Clues["cdorw"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("orstu"));
+            Assert.AreEqual(2, helper.Clues["orstu"]);
+
+            helper.HandleGuess("hours", 2);
+            Assert.AreEqual(0, helper.KnownIn.Count);
+            Assert.AreEqual(0, helper.KnownOut.Count);
+            Assert.AreEqual(6, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("fghit"));
+            Assert.AreEqual(1, helper.Clues["fghit"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkns"));
+            Assert.AreEqual(1, helper.Clues["abkns"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cdorw"));
+            Assert.AreEqual(2, helper.Clues["cdorw"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("orstu"));
+            Assert.AreEqual(2, helper.Clues["orstu"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("horsu"));
+            Assert.AreEqual(2, helper.Clues["horsu"]);
+
+            helper.AddKnownOut('t');
+            Assert.AreEqual(0, helper.KnownIn.Count);
+            Assert.AreEqual(1, helper.KnownOut.Count);
+            Assert.IsTrue(helper.KnownOut.Contains('t'));
+            Assert.AreEqual(6, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("fghi"));
+            Assert.AreEqual(1, helper.Clues["fghi"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkns"));
+            Assert.AreEqual(1, helper.Clues["abkns"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cdorw"));
+            Assert.AreEqual(2, helper.Clues["cdorw"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("orsu"));
+            Assert.AreEqual(2, helper.Clues["orsu"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("horsu"));
+            Assert.AreEqual(2, helper.Clues["horsu"]);
+
+            helper.AddKnownOut('h');
+            Assert.AreEqual(0, helper.KnownIn.Count);
+            Assert.AreEqual(2, helper.KnownOut.Count);
+            Assert.IsTrue(helper.KnownOut.Contains('h'));
+            Assert.IsTrue(helper.KnownOut.Contains('t'));
+            Assert.AreEqual(5, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("fgi"));
+            Assert.AreEqual(1, helper.Clues["fgi"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkns"));
+            Assert.AreEqual(1, helper.Clues["abkns"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cdorw"));
+            Assert.AreEqual(2, helper.Clues["cdorw"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("orsu"));
+            Assert.AreEqual(2, helper.Clues["orsu"]);
+
+            helper.HandleGuess("fours", 3);
+            Assert.AreEqual(0, helper.KnownIn.Count);
+            Assert.AreEqual(2, helper.KnownOut.Count);
+            Assert.IsTrue(helper.KnownOut.Contains('h'));
+            Assert.IsTrue(helper.KnownOut.Contains('t'));
+            Assert.AreEqual(6, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("fgi"));
+            Assert.AreEqual(1, helper.Clues["fgi"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkns"));
+            Assert.AreEqual(1, helper.Clues["abkns"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cdorw"));
+            Assert.AreEqual(2, helper.Clues["cdorw"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("orsu"));
+            Assert.AreEqual(2, helper.Clues["orsu"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("forsu"));
+            Assert.AreEqual(3, helper.Clues["forsu"]);
+
+            helper.AddKnownIn('f');
+            Assert.AreEqual(1, helper.KnownIn.Count);
+            Assert.IsTrue(helper.KnownIn.ContainsKey('f'));
+            Assert.AreEqual(4, helper.KnownOut.Count);
+            Assert.IsTrue(helper.KnownOut.Contains('g'));
+            Assert.IsTrue(helper.KnownOut.Contains('h'));
+            Assert.IsTrue(helper.KnownOut.Contains('i'));
+            Assert.IsTrue(helper.KnownOut.Contains('t'));
+            Assert.AreEqual(4, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkns"));
+            Assert.AreEqual(1, helper.Clues["abkns"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cdorw"));
+            Assert.AreEqual(2, helper.Clues["cdorw"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("orsu"));
+            Assert.AreEqual(2, helper.Clues["orsu"]);
+
+            // Did I do "can't be s becuase then no o or u or a" here or later?
+            // At some point after I do that, I see known in of "foor", even
+            // though there's no clue with two o's in it.  Did I fat-finger
+            // some other known in/out?  Like two o's?
+            helper.AddKnownOut('s');
+            Assert.AreEqual(1, helper.KnownIn.Count);
+            Assert.IsTrue(helper.KnownIn.ContainsKey('f'));
+            Assert.AreEqual(5, helper.KnownOut.Count);
+            Assert.IsTrue(helper.KnownOut.Contains('g'));
+            Assert.IsTrue(helper.KnownOut.Contains('h'));
+            Assert.IsTrue(helper.KnownOut.Contains('i'));
+            Assert.IsTrue(helper.KnownOut.Contains('s'));
+            Assert.IsTrue(helper.KnownOut.Contains('t'));
+            Assert.AreEqual(4, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkn"));
+            Assert.AreEqual(1, helper.Clues["abkn"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cdorw"));
+            Assert.AreEqual(2, helper.Clues["cdorw"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("oru"));
+            Assert.AreEqual(2, helper.Clues["oru"]);
+
+            helper.HandleGuess("focus", 2);
+            Assert.AreEqual(1, helper.KnownIn.Count);
+            Assert.IsTrue(helper.KnownIn.ContainsKey('f'));
+            Assert.AreEqual(5, helper.KnownOut.Count);
+            Assert.IsTrue(helper.KnownOut.Contains('g'));
+            Assert.IsTrue(helper.KnownOut.Contains('h'));
+            Assert.IsTrue(helper.KnownOut.Contains('i'));
+            Assert.IsTrue(helper.KnownOut.Contains('s'));
+            Assert.IsTrue(helper.KnownOut.Contains('t'));
+            Assert.AreEqual(5, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkn"));
+            Assert.AreEqual(1, helper.Clues["abkn"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cdorw"));
+            Assert.AreEqual(2, helper.Clues["cdorw"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("oru"));
+            Assert.AreEqual(2, helper.Clues["oru"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cou"));
+            Assert.AreEqual(1, helper.Clues["cou"]);
+
+            helper.AddKnownIn('r');
+            Assert.AreEqual(2, helper.KnownIn.Count);
+            Assert.IsTrue(helper.KnownIn.ContainsKey('f'));
+            Assert.IsTrue(helper.KnownIn.ContainsKey('r'));
+            Assert.AreEqual(5, helper.KnownOut.Count);
+            Assert.IsTrue(helper.KnownOut.Contains('g'));
+            Assert.IsTrue(helper.KnownOut.Contains('h'));
+            Assert.IsTrue(helper.KnownOut.Contains('i'));
+            Assert.IsTrue(helper.KnownOut.Contains('s'));
+            Assert.IsTrue(helper.KnownOut.Contains('t'));
+            Assert.AreEqual(5, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkn"));
+            Assert.AreEqual(1, helper.Clues["abkn"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cdow"));
+            Assert.AreEqual(1, helper.Clues["cdow"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("ou"));
+            Assert.AreEqual(1, helper.Clues["ou"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("cou"));
+            Assert.AreEqual(1, helper.Clues["cou"]);
+
+            helper.AddKnownOut('c');
+            Assert.AreEqual(2, helper.KnownIn.Count);
+            Assert.IsTrue(helper.KnownIn.ContainsKey('f'));
+            Assert.IsTrue(helper.KnownIn.ContainsKey('r'));
+            Assert.AreEqual(6, helper.KnownOut.Count);
+            Assert.IsTrue(helper.KnownOut.Contains('c'));
+            Assert.IsTrue(helper.KnownOut.Contains('g'));
+            Assert.IsTrue(helper.KnownOut.Contains('h'));
+            Assert.IsTrue(helper.KnownOut.Contains('i'));
+            Assert.IsTrue(helper.KnownOut.Contains('s'));
+            Assert.IsTrue(helper.KnownOut.Contains('t'));
+            Assert.AreEqual(4, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkn"));
+            Assert.AreEqual(1, helper.Clues["abkn"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("dow"));
+            Assert.AreEqual(1, helper.Clues["dow"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("ou"));
+            Assert.AreEqual(1, helper.Clues["ou"]);
+
+            helper.HandleGuess("foamy", 3);
+            Assert.AreEqual(2, helper.KnownIn.Count);
+            Assert.IsTrue(helper.KnownIn.ContainsKey('f'));
+            Assert.IsTrue(helper.KnownIn.ContainsKey('r'));
+            Assert.AreEqual(6, helper.KnownOut.Count);
+            Assert.IsTrue(helper.KnownOut.Contains('c'));
+            Assert.IsTrue(helper.KnownOut.Contains('g'));
+            Assert.IsTrue(helper.KnownOut.Contains('h'));
+            Assert.IsTrue(helper.KnownOut.Contains('i'));
+            Assert.IsTrue(helper.KnownOut.Contains('s'));
+            Assert.IsTrue(helper.KnownOut.Contains('t'));
+            Assert.AreEqual(5, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("jmpuy"));
+            Assert.AreEqual(1, helper.Clues["jmpuy"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkn"));
+            Assert.AreEqual(1, helper.Clues["abkn"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("dow"));
+            Assert.AreEqual(1, helper.Clues["dow"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("ou"));
+            Assert.AreEqual(1, helper.Clues["ou"]);
+            Assert.IsTrue(helper.Clues.ContainsKey("amoy"));
+            Assert.AreEqual(2, helper.Clues["amoy"]);
+
+            helper.HandleGuess("farms", 2);
+            Assert.AreEqual(4, helper.KnownIn.Count);
+            Assert.IsTrue(helper.KnownIn.ContainsKey('f'));
+            Assert.IsTrue(helper.KnownIn.ContainsKey('o'));
+            Assert.IsTrue(helper.KnownIn.ContainsKey('r'));
+            Assert.IsTrue(helper.KnownIn.ContainsKey('y'));
+            Assert.AreEqual(13, helper.KnownOut.Count);
+            Assert.IsTrue(helper.KnownOut.Contains('a'));
+            Assert.IsTrue(helper.KnownOut.Contains('c'));
+            Assert.IsTrue(helper.KnownOut.Contains('d'));
+            Assert.IsTrue(helper.KnownOut.Contains('g'));
+            Assert.IsTrue(helper.KnownOut.Contains('h'));
+            Assert.IsTrue(helper.KnownOut.Contains('i'));
+            Assert.IsTrue(helper.KnownOut.Contains('j'));
+            Assert.IsTrue(helper.KnownOut.Contains('m'));
+            Assert.IsTrue(helper.KnownOut.Contains('p'));
+            Assert.IsTrue(helper.KnownOut.Contains('s'));
+            Assert.IsTrue(helper.KnownOut.Contains('t'));
+            Assert.IsTrue(helper.KnownOut.Contains('u'));
+            Assert.IsTrue(helper.KnownOut.Contains('w'));
+            Assert.AreEqual(1, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("bkn"));
+            Assert.AreEqual(1, helper.Clues["bkn"]);
+        }
+
+
+        [TestMethod]
+        public void TestGame12()
+        {
+            var helper = new JottoGameHelper();
+
+            helper.HandleGuess("fight", 2);
+            helper.HandleGuess("jumpy", 1);
+            helper.HandleGuess("banks", 1);
+            helper.HandleGuess("crowd", 0);
+            helper.HandleGuess("level", 1);
+            helper.HandleGuess("times", 1);
+            helper.HandleGuess("laugh", 1);
+            helper.HandleGuess("pithy", 2);
+            helper.HandleGuess("piths", 1);
+            helper.AddKnownIn('y');
+            helper.AddKnownOut('s');
+            helper.HandleGuess("yikes", 2);
+            helper.HandleGuess("yield", 2);
+            helper.HandleGuess("talky", 1);
+        }
     }
 }

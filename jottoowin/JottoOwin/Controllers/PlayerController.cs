@@ -8,21 +8,25 @@ using System.Web.Http;
 namespace JottoOwin.Controllers
 {
 	using Hubs;
+    using System.Linq;
 
-	[RoutePrefix("api/players")]
+    [RoutePrefix("api/players")]
 	public class PlayerController : ApiController
 	{
 		public const string Player = "Player";
 		public const string Players = "Players";
+        public const string PlayerAverage = "PlayerAverage";
 
-		public PlayerController(IRepository<JottoPlayer> players)
+        public PlayerController(IRepository<JottoPlayer> players, IRepository<JottoGame> games)
 		{
 			_players = players;
+            _games = games;
 		}
 
 		private readonly IRepository<JottoPlayer> _players;
+        private readonly IRepository<JottoGame> _games;
 
-		[HttpPost]
+        [HttpPost]
 		[Route("")]
 		public async Task<IHttpActionResult> RegisterPlayerAsync([FromBody] string player)
 		{
@@ -60,5 +64,18 @@ namespace JottoOwin.Controllers
 
 			return Ok(player);
 		}
-	}
+
+        [HttpGet]
+        [Route("{playerIdOrName}/average", Name = PlayerAverage)]
+        public async Task<IHttpActionResult> GetPlayerAverageAsync(string playerIdOrName)
+        {
+            JottoPlayer player = Guid.TryParse(playerIdOrName, out Guid guid)
+                ? await _players.GetAsync(playerIdOrName)
+                : await _players.GetAsync(p => p.Name == playerIdOrName);
+
+            if (player == null) return NotFound();
+                        
+            return Ok((await _games.GetAllAsync(game => game.Player1Id == player.Id || game.Player2Id == player.Id)).Count());
+        }
+    }
 }
