@@ -164,7 +164,7 @@ namespace Hokanson.JottoHelper
 						}
 						else
 						{
-							done = !AddRemainingToKnownOut(remaining.Item1);
+                            done &= !AddRemainingToKnownOut(remaining.Item1);
 						}
 					}
 					else if (remaining.Item2 > 0 && remaining.Item1.Length == remaining.Item2)

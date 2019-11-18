@@ -3454,7 +3454,6 @@ namespace MSTest.Hokanson.JottoHelper
             Assert.AreEqual(1, helper.Clues["bkn"]);
         }
 
-
         [TestMethod]
         public void TestGame12()
         {
@@ -3474,6 +3473,33 @@ namespace MSTest.Hokanson.JottoHelper
             helper.HandleGuess("yikes", 2);
             helper.HandleGuess("yield", 2);
             helper.HandleGuess("talky", 1);
+        }
+
+        [TestMethod]
+        public void TestGame13()
+        {
+            var helper = new JottoGameHelper();
+
+            helper.HandleGuess("fight", 0);
+            helper.HandleGuess("jumpy", 3);
+            helper.HandleGuess("banks", 1);
+            helper.HandleGuess("crowd", 0);
+            helper.HandleGuess("level", 1);
+            helper.HandleGuess("spume", 3);
+            helper.HandleGuess("dumpy", 3);
+            helper.HandleGuess("mused", 2);
+            helper.HandleGuess("pumps", 3);
+            helper.HandleGuess("mummy", 2);
+            helper.HandleGuess("mommy", 1);
+            helper.HandleGuess("plump", 4);
+            helper.AddKnownIn('p');
+            helper.AddKnownIn('u');
+            helper.AddKnownIn('l');
+            helper.AddKnownOut('j');
+            helper.AddKnownIn('m');
+
+            Assert.AreEqual(1, helper.Clues.Count);
+            Assert.IsTrue(helper.Clues.ContainsKey("abkn"));
         }
     }
 }
